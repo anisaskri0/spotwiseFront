@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, SafeAreaView, View, Image, KeyboardAvoidingView, TextInput, Pressable } from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  View,
+  Image,
+  KeyboardAvoidingView,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-
-const LoginScreen = ({navigation}) => {
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
- useEffect(() => {
+  useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-
+       const email = await AsyncStorage.getItem("email")
+        console.log(token);
+       console.log(email);
         if (token) {
-        //  navigation.navigate("Main");
+          navigation.navigate("Main");
         }
       } catch (err) {
         console.log("error message", err);
@@ -32,6 +39,7 @@ const LoginScreen = ({navigation}) => {
   }, []);
   const handleLogin = () => {
     const user = {
+
       email: email,
       password: password,
     };
@@ -42,10 +50,12 @@ const LoginScreen = ({navigation}) => {
         console.log(response);
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
-        navigation.navigate("Main");
+        AsyncStorage.setItem("email", email);
+
+        navigation.replace("Main");
       })
       .catch((error) => {
-        Alert.alert("Login Error", "Invalid Email");
+       Alert.alert("Please Re-check your credentials !")
         console.log(error);
       });
   };
@@ -53,23 +63,40 @@ const LoginScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Image style={styles.logo} source={{ uri: "https://assets.stickpng.com/thumbs/6160562276000b00045a7d97.png" }} />
+        <Image
+          style={styles.logo}
+          source={require('./spottie.jpg') }
+        />
       </View>
       <KeyboardAvoidingView behavior="padding" style={styles.formContainer}>
         <Text style={styles.heading}>Login to your Account</Text>
         <View style={styles.inputContainer}>
           <MaterialIcons name="email" size={24} color="gray" />
-          <TextInput value={email} onChangeText={(text) => setEmail(text)} style={styles.input} placeholder="Enter your Email" />
+          <TextInput
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+            placeholder="Enter your Email"
+          />
         </View>
         <View style={styles.inputContainer}>
           <AntDesign name="lock1" size={24} color="gray" />
-          <TextInput value={password} onChangeText={(text) => setPassword(text)} style={styles.input} placeholder="Enter your Password" secureTextEntry />
+          <TextInput
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+            placeholder="Enter your Password"
+            secureTextEntry
+          />
         </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Pressable onPress={handleLogin} style={styles.loginButton}>
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
-        <Pressable onPress={() => navigation.navigate("Register")} style={styles.signUpButton}>
+        <Pressable
+          onPress={() => navigation.navigate("Register")}
+          style={styles.signUpButton}
+        >
           <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
         </Pressable>
       </KeyboardAvoidingView>
@@ -97,7 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     marginTop: 12,
-    color: "#041E42",
+    color: "black",
     textAlign: "center",
   },
   inputContainer: {
@@ -121,7 +148,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   loginButton: {
-    backgroundColor: "#FEBE10",
+    backgroundColor: "black",
     borderRadius: 6,
     padding: 15,
     marginTop: 30,

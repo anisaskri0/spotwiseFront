@@ -1,4 +1,3 @@
-
 import {
   StyleSheet,
   Text,
@@ -34,7 +33,7 @@ const RegisterScreen = () => {
       .post("http://10.0.2.2:8000/register", user)
       .then((response) => {
         console.log(response);
-        console.log("registred")
+        console.log("registred");
         Alert.alert(
           "Registration successful",
           "You have been registered Successfully"
@@ -42,6 +41,7 @@ const RegisterScreen = () => {
         setName("");
         setEmail("");
         setPassword("");
+        navigation.replace("Login");
       })
       .catch((error) => {
         Alert.alert(
@@ -53,25 +53,29 @@ const RegisterScreen = () => {
   };
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center",marginTop:50  }}
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        alignItems: "center",
+        marginTop: 50,
+      }}
     >
       <View>
         <Image
-          style={{ width: 150, height: 100 }}
-          source={{
-            uri: "https://assets.stickpng.com/thumbs/6160562276000b00045a7d97.png",
-          }}
+          style={{ width: 150, height: 100, marginTop : 30 }}
+          source={require('./spottie.jpg') }
+
         />
       </View>
 
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView behavior="padding" style={styles.formContainer}>
         <View style={{ alignItems: "center" }}>
           <Text
             style={{
               fontSize: 17,
-              fontWeight: "bold",
+              fontWeight : "bold",
               marginTop: 12,
-              color: "#041E42",
+              color: "black",
             }}
           >
             Register to your Account
@@ -196,7 +200,7 @@ const RegisterScreen = () => {
           onPress={handleRegister}
           style={{
             width: 200,
-            backgroundColor: "#FEBE10",
+            backgroundColor: "black",
             borderRadius: 6,
             marginLeft: "auto",
             marginRight: "auto",
@@ -230,4 +234,9 @@ const RegisterScreen = () => {
 
 export default RegisterScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  formContainer: {
+    width: "100%",
+    marginTop: 50,
+  },
+});

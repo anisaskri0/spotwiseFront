@@ -31,8 +31,9 @@ mongoose
   });
 
 const User = require("./models/user");
-
-const sendVerificationEmail = async (email, verificationToken) => {
+const SpotData = require("./models/spotdata")
+const sendVerificationEmail 
+= async (email, verificationToken) => {
   // Create a Nodemailer transporter
   const transporter = nodemailer.createTransport({
     // Configure the email service or SMTP details here
@@ -60,7 +61,38 @@ const sendVerificationEmail = async (email, verificationToken) => {
 };
 // Register a new user
 // ... existing imports and setup ...
+// get all users
+const GetUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const GetData = async (req ,res) => {
+  try {
+    const data = await SpotData.find({});
+    res.status(200).json(data) ;
 
+  } catch(error) {
+    res.status(500).json({error : error.message})
+  }
+}
+
+// Define the route for GET request to fetch users
+app.get('/users', GetUsers);
+app.get("/data" , GetData) ;
+app.post("/data" , async(req,res) => {
+  try{
+    const{blockName , spotNumber , availability} = req.body 
+    const newSpotData = new SpotData ({blockName , spotNumber , availability}) ;
+    await newSpotData.save() ; 
+  } catch(error) {
+    console.log("Error during saving new spot DATA:", error); // Debugging statement
+    res.status(500).json({ message: "Saving Failed" });
+  }
+})
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
