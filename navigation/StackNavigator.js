@@ -11,8 +11,11 @@ import { Octicons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import MainScreen from "../screens/MainScreen";
 import HomeScreen from "../screens/HomeScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import FirstScreen from "../screens/FirstScreen";
+import { Feather } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -21,14 +24,14 @@ const StackNavigator = () => {
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={ProfileScreen}
           options={{
             tabBarLabel: "Home",
             tabBarLabelStyle: { color: "#008E97" },
             headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <Entypo name="home" size={24} color="black" />
+                <Entypo name="home" size={24} color="orange" />
               ) : (
                 <AntDesign name="home" size={24} color="black" />
               ),
@@ -39,14 +42,14 @@ const StackNavigator = () => {
           name="Profile"
           component={HomeScreen}
           options={{
-            tabBarLabel: "Profile",
+            tabBarLabel: "Settings",
             tabBarLabelStyle: { color: "#008E97" },
             headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <Octicons name="person-fill" size={24} color="black" />
+                <Ionicons name="settings" size={24} color="orange" />
               ) : (
-                <Octicons name="person" size={24} color="black" />
+                <Feather name="settings" size={24} color="black" />
               ),
           }}
         />
@@ -55,7 +58,12 @@ const StackNavigator = () => {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="First">
+        <Stack.Screen
+          name="First"
+          component={FirstScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}

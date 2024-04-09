@@ -25,9 +25,9 @@ const LoginScreen = ({ navigation }) => {
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("authToken");
-       const email = await AsyncStorage.getItem("email")
+        const email = await AsyncStorage.getItem("email");
         console.log(token);
-       console.log(email);
+        console.log(email);
         if (token) {
           navigation.navigate("Main");
         }
@@ -39,13 +39,12 @@ const LoginScreen = ({ navigation }) => {
   }, []);
   const handleLogin = () => {
     const user = {
-
       email: email,
       password: password,
     };
 
     axios
-      .post("http://10.0.2.2:8000/login", user)
+      .post("http://192.168.1.45:8000/login", user)
       .then((response) => {
         console.log(response);
         const token = response.data.token;
@@ -55,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
         navigation.replace("Main");
       })
       .catch((error) => {
-       Alert.alert("Please Re-check your credentials !")
+        Alert.alert("Please Re-check your credentials !");
         console.log(error);
       });
   };
@@ -63,10 +62,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Image
-          style={styles.logo}
-          source={require('./spottie.jpg') }
-        />
+        <Image style={styles.logo} source={require("./spotwise.png")} />
       </View>
       <KeyboardAvoidingView behavior="padding" style={styles.formContainer}>
         <Text style={styles.heading}>Login to your Account</Text>

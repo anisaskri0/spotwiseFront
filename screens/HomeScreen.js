@@ -42,20 +42,21 @@ const HomeScreen = ({ navigation }) => {
     // Call the fetchUserName function when the component mounts
     fetchUserName();
   }, []); // Empty dependency array ensures the effect runs only once on mount
-  const blocks = ['A', 'B', 'C', 'D'];
-  const spots = [1, 2, 3, 4];
-  const [blockName, setBlockName] = useState('');
-  const [spotNumber, setSpotNumber] = useState('');
+  const blocks = ["A", "B", "C", "D"];
+  const spots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  const spots1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  const [blockName, setBlockName] = useState("");
+  const [spotNumber, setSpotNumber] = useState("");
   const [occupiedSpots, setOccupiedSpots] = useState([]);
   const [showSquare, setShowSquare] = useState(false);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://10.0.2.2:8000/data');
+      const response = await axios.get("http://10.0.2.2:8000/data");
       const spots = response.data;
 
       // Filter spots where availability is true (occupied spots)
-      const occupiedSpots = spots.filter(spot => spot.availability);
+      const occupiedSpots = spots.filter((spot) => spot.availability);
 
       // Update state with occupied spots
       setOccupiedSpots(occupiedSpots);
@@ -69,81 +70,167 @@ const HomeScreen = ({ navigation }) => {
       } else {
         setShowSquare(false); // Set showSquare to false if no occupied spots
       }
-
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
   return (
-    <View style={styles.container}>
-      {showSquare && (
+    <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <View style={styles.squareContainer}>
-          {/* Render spots alongside blocks */}
-          {blocks.map((block) => (
-            <View key={block} style={styles.block}>
-              {/* Render block name */}
-              <Text style={styles.blockName}>{block}</Text>
-              {/* Render spots for this block */}
-              {spots.map((spot) => (
-                <View key={`${block}-${spot}`} style={[styles.spot, (block === blockName && spot === spotNumber) && styles.occupiedSpot]}>
+          {/* Render spots for block A */}
+          {showSquare &&
+            spots.map((spot) => (
+              <View key={spot} style={styles.block}>
+                {/* Render spots for this block */}
+                <View
+                  key={`${spot}`}
+                  style={[
+                    styles.spot,
+                    "A" === blockName &&
+                      spot === spotNumber &&
+                      styles.occupiedSpot,
+                  ]}
+                >
                   {/* Render spot number */}
-                  <Text style={styles.spotNumber}>{block}{spot}</Text>
+                  <Text style={styles.spotNumber}>A{spot}</Text>
                 </View>
-              ))}
-            </View>
-          ))}
+              </View>
+            ))}
         </View>
-      )}
 
-      {showSquare && (
-        <Text>
-          Your Available spot is at : {blockName}{spotNumber} ;
-        </Text>
-      )}
+        {showSquare && (
+          <View style={{ height: 30, backgroundColor: "black" }}></View>
+        )}
 
-      {!showSquare && (
-        <Button title="Park Your Car" onPress={fetchData}></Button>
-      )}
-      <Button title ="Logout" onPress={handleLogout} ></Button>
+        {/* Add a new line */}
+        <View style={styles.squareContainer}>
+          {/* Render spots for block B */}
+          {showSquare &&
+            spots1.map((spot) => (
+              <View key={spot} style={styles.block}>
+                {/* Render spots for this block */}
+                <View
+                  key={`${spot}`}
+                  style={[
+                    styles.spot,
+                    "B" === blockName &&
+                      spot === spotNumber &&
+                      styles.occupiedSpot,
+                  ]}
+                >
+                  {/* Render spot number */}
+                  <Text style={styles.spotNumber}>B{spot}</Text>
+                </View>
+              </View>
+            ))}
+        </View>
+
+        {/* Add a new line */}
+        <View style={styles.squareContainer}>
+          {/* Render spots for block C */}
+          {showSquare &&
+            spots1.map((spot) => (
+              <View key={spot} style={styles.block}>
+                {/* Render spots for this block */}
+                <View
+                  key={`${spot}`}
+                  style={[
+                    styles.spot,
+                    "C" === blockName &&
+                      spot === spotNumber &&
+                      styles.occupiedSpot,
+                  ]}
+                >
+                  {/* Render spot number */}
+                  <Text style={styles.spotNumber}>C{spot}</Text>
+                </View>
+              </View>
+            ))}
+        </View>
+
+        {showSquare && (
+          <View style={{ height: 30, backgroundColor: "black" }}></View>
+        )}
+
+        {/* Add a new line */}
+        <View style={styles.squareContainer}>
+          {/* Render spots for block D */}
+          {showSquare &&
+            spots1.map((spot) => (
+              <View key={spot} style={styles.block}>
+                {/* Render spots for this block */}
+                <View
+                  key={`${spot}`}
+                  style={[
+                    styles.spot,
+                    "D" === blockName &&
+                      spot === spotNumber &&
+                      styles.occupiedSpot,
+                  ]}
+                >
+                  {/* Render spot number */}
+                  <Text style={styles.spotNumber}>D{spot}</Text>
+                </View>
+              </View>
+            ))}
+        </View>
+
+        {/* Conditional rendering based on showSquare */}
+        <View>
+          {showSquare && (
+            <Text>
+              Your Available spot is at : {blockName}
+              {spotNumber} ;
+            </Text>
+          )}
+        </View>
+
+        {/* Button rendering */}
+        <View>
+          {!showSquare && (
+            <Button title="Park Your Car" onPress={fetchData}></Button>
+          )}
+        </View>
+      </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
   },
   squareContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignItems: "center",
   },
   block: {
-    alignItems: 'center',
-    marginRight: 10,
+    alignItems: "center",
+    marginRight: 2,
+    backgroundColor: "gray",
   },
   blockName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: "bold",
     marginBottom: 5,
   },
   spot: {
-    width: 40,
+    width: 25,
     height: 40,
-    backgroundColor: 'lightgray',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "lightgray",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 5,
   },
   occupiedSpot: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
   spotNumber: {
-    fontSize: 16,
+    fontSize: 12,
   },
 });
 
-
-  export default HomeScreen;
+export default HomeScreen;

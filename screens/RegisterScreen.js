@@ -30,7 +30,7 @@ const RegisterScreen = () => {
 
     // send a POST  request to the backend API to register the user
     axios
-      .post("http://10.0.2.2:8000/register", user)
+      .post("http://192.168.1.45:8000/register", user)
       .then((response) => {
         console.log(response);
         console.log("registred");
@@ -62,9 +62,8 @@ const RegisterScreen = () => {
     >
       <View>
         <Image
-          style={{ width: 150, height: 100, marginTop : 30 }}
-          source={require('./spottie.jpg') }
-
+          style={{ width: 150, height: 100, marginTop: 30 }}
+          source={require("./spotwise.png")}
         />
       </View>
 
@@ -73,7 +72,7 @@ const RegisterScreen = () => {
           <Text
             style={{
               fontSize: 17,
-              fontWeight : "bold",
+              fontWeight: "bold",
               marginTop: 12,
               color: "black",
             }}
