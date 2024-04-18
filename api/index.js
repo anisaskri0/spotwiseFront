@@ -1,4 +1,3 @@
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -15,14 +14,17 @@ app.use(bodyParser.json());
 
 const jwt = require("jsonwebtoken");
 app.listen(port, () => {
-  console.log("Server is running on port 8000");
+  console.log("Server is running on port 8000 pl");
 });
 
 mongoose
-  .connect("mongodb+srv://anisaskri:52978978aA@ecommerce.kqbp9od.mongodb.net/", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://anisaskri:52978978aA@ecommerce.kqbp9od.mongodb.net/",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -31,9 +33,8 @@ mongoose
   });
 
 const User = require("./models/user");
-const SpotData = require("./models/spotdata")
-const sendVerificationEmail 
-= async (email, verificationToken) => {
+const SpotData = require("./models/spotdata");
+const sendVerificationEmail = async (email, verificationToken) => {
   // Create a Nodemailer transporter
   const transporter = nodemailer.createTransport({
     // Configure the email service or SMTP details here
@@ -46,10 +47,11 @@ const sendVerificationEmail
 
   // Compose the email message
   const mailOptions = {
-    from: "amazon.com",
+    from: "SpotWise",
     to: email,
     subject: "Email Verification",
-    text: `Please click the following link to verify your email: http://localhost:8000/verify/${verificationToken}`,  };
+    text: `Please click the following link to verify your email: http://localhost:8000/verify/${verificationToken}`,
+  };
 
   // Send the email
   try {
@@ -70,29 +72,67 @@ const GetUsers = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const GetData = async (req ,res) => {
+const GetData = async (req, res) => {
   try {
     const data = await SpotData.find({});
-    res.status(200).json(data) ;
-
-  } catch(error) {
-    res.status(500).json({error : error.message})
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-}
+};
+
+const updateStatus = async (parkingSpaceId) => {
+  try {
+    // Find the document with the given parking space ID
+    const document = await SpotData.findOne({ "parking_spaces.id": parkingSpaceId });
+
+    // If document doesn't exist, return an error
+    if (!document) {
+      throw new Error("Parking spot not found");
+    }
+
+    // Find the parking space within the document
+    const parkingSpace = document.parking_spaces.find(space => space.id === parkingSpaceId);
+
+    // Update the status of the parking space to "pending"
+    parkingSpace.status = "pending";
+
+    // Save the updated document
+    await document.save();
+
+    // Return the updated parking space
+    return parkingSpace;
+  } catch (error) {
+    throw error; // Forward the error to the caller
+  }
+};
+app.put("/parking/:id/pending", async (req, res) => {
+  try {
+    const parkingSpaceId = req.params.id;
+    const updatedParkingSpace = await updateStatus(parkingSpaceId);
+    res.json(updatedParkingSpace);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+
 
 // Define the route for GET request to fetch users
-app.get('/users', GetUsers);
-app.get("/data" , GetData) ;
-app.post("/data" , async(req,res) => {
-  try{
-    const{blockName , spotNumber , availability} = req.body 
-    const newSpotData = new SpotData ({blockName , spotNumber , availability}) ;
-    await newSpotData.save() ; 
-  } catch(error) {
+app.get("/users", GetUsers);
+app.get("/data", GetData);
+app.put("/parking/")
+app.post("/data", async (req, res) => {
+  try {
+    const { floor, camera_id, parking_spaces } = req.body;
+    const newSpotData = new SpotData({ floor, camera_id, parking_spaces });
+    await newSpotData.save();
+    console.log("DATA HAS BEEN SAVED SUCCEFULLY ");
+  } catch (error) {
     console.log("Error during saving new spot DATA:", error); // Debugging statement
     res.status(500).json({ message: "Saving Failed" });
   }
-})
+});
 app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -109,7 +149,7 @@ app.post("/register", async (req, res) => {
 
     // Generate and store the verification token
     newUser.verificationToken = crypto.randomBytes(20).toString("hex");
-console.log(newUser.verificationToken);
+    console.log(newUser.verificationToken);
     // Save the user to the database
     await newUser.save();
 
@@ -152,7 +192,6 @@ app.get("/verify/:token", async (req, res) => {
     res.status(500).json({ message: "Email Verificatioion Failed" });
   }
 });
-
 const generateSecretKey = () => {
   const secretKey = crypto.randomBytes(32).toString("hex");
 

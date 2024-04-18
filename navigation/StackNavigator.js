@@ -15,7 +15,9 @@ import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import FirstScreen from "../screens/FirstScreen";
 import { Feather } from "@expo/vector-icons";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import TESTLOG from "../screens/TESTLOG";
+import TESTSIGN from "../screens/TESTSIGN";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -24,7 +26,7 @@ const StackNavigator = () => {
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
-          component={ProfileScreen}
+          component={HomeScreen}
           options={{
             tabBarLabel: "Home",
             tabBarLabelStyle: { color: "#008E97" },
@@ -40,7 +42,7 @@ const StackNavigator = () => {
 
         <Tab.Screen
           name="Profile"
-          component={HomeScreen}
+          component={ProfileScreen}
           options={{
             tabBarLabel: "Settings",
             tabBarLabelStyle: { color: "#008E97" },
@@ -58,7 +60,8 @@ const StackNavigator = () => {
   }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="First">
+      <Stack.Navigator initialRouteName="Main">
+        
         <Stack.Screen
           name="First"
           component={FirstScreen}
@@ -78,6 +81,16 @@ const StackNavigator = () => {
           name="Main"
           component={BottomTabs}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login1"
+          component={TESTLOG}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+        name ="Sign" 
+        component={TESTSIGN} 
+        options ={{headerShown : false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

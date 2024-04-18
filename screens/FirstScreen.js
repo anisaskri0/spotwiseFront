@@ -54,7 +54,7 @@ const HomeScreen = () => {
     },
     box: {
       marginTop: 100,
-      backgroundColor: "#FF8C00",
+      backgroundColor: "#FE5F3C",
       width: 400,
       height: 50,
       borderRadius: 150,
