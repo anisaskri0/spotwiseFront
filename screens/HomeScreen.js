@@ -53,7 +53,7 @@ const HomeScreen = ({ navigation }) => {
     try {
       const response = await axios.get("http://10.0.2.2:8000/data");
       const parkingSpaces = response.data;
-      const 
+      
       const freeParkingSpace = parkingSpaces.find(
         (space) => space.status === "free"
       );
