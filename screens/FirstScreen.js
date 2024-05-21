@@ -8,14 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome6 } from "@expo/vector-icons";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
   const goToLogin = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Login1");
   };
 
   return (

@@ -6,17 +6,76 @@ import {
   TextInput,
   Pressable,
   KeyboardAvoidingView,
+  Alert
 } from "react-native";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import React from "react";
+
 const TESTLOG = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate= useNavigation() ;
 
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const _id = await AsyncStorage.getItem("_id");
+  
+
+        if (token) {
+          const response = await axios.get("https://spotwise-backend-anis-askris-projects.vercel.app/users", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          userData = response.data
+          const userID = _id;
+          const user = userData.find(user => user._id ===userID) ;
+          if(user.verified && token) {
+            navigate.replace("Main") ;
+          } else {
+            Alert.alert("Please Verify Your Email !! ")
+          }
+        }
+        console.log(token);
+  
+      } catch (err) {
+        console.log("error message", err);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+  const handleLogin = () => {
+    const user = {
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post("http://10.0.2.2:8000/login", user)
+      .then((response) => {
+        console.log(response);
+        const token = response.data.token;
+        const _id = response.data._id;
+        AsyncStorage.setItem("authToken", token);
+        AsyncStorage.setItem("email", email);
+        AsyncStorage.setItem("_id", _id); // Storing _id in AsyncStorage
+        navigate.replace("Main") ;
+            })
+      .catch((error) => {
+        Alert.alert("Please Re-check your credentials !");
+        console.log(error);
+      });
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.first}>
@@ -63,9 +122,11 @@ const TESTLOG = () => {
             />
             <TextInput
               value={password}
+              secureTextEntry={true} // This will hide the text input
+
               onChangeText={(text) => setPassword(text)}
               style={styles.input}
-              placeholder="Enter your Email"
+              placeholder="Enter your password"
             />
           </View>
         </KeyboardAvoidingView>
@@ -84,12 +145,12 @@ const TESTLOG = () => {
           </Text>
         </Pressable>
         <View style={styles.LoginContainer}>
-          <Pressable>
+          <Pressable onPress={handleLogin}> 
             <Text
               style={{
                 fontWeight: "bold",
                 fontSize: 20,
-                fontFamily: "italic",
+               
                 textAlign: "center",
                 color: "white",
                 margin: 15,
@@ -112,9 +173,11 @@ const TESTLOG = () => {
             color="black"
             style={{ marginRight: 15 }}
           />
-          <Entypo name="facebook" size={50} color="blue" style={{ marginRight: 15 }} />
+         
+          <Entypo name="facebook" size={50} color="black" style={{ marginRight: 15 }} />
           <AntDesign name="google" size={50} color="black" />
         </View>
+        <Pressable onPress={() => {navigate.navigate("Sign")}} >
         <Text
           style={{
             textAlign: "right",
@@ -127,6 +190,8 @@ const TESTLOG = () => {
         >
           Don't have an account ? SignUp
         </Text>
+        </Pressable>
+      
       </View>
     </View>
   );
@@ -166,7 +231,7 @@ const styles = StyleSheet.create({
   },
   LoginContainer: {
     marginTop: 20,
-    backgroundColor: "#FE5F3C",
+    backgroundColor: "black",
     width: 350,
     height: 60,
     borderWidth : 0.5 ,

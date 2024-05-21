@@ -1,3 +1,7 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
+
 import {
   StyleSheet,
   Text,
@@ -6,20 +10,47 @@ import {
   TextInput,
   Pressable,
   KeyboardAvoidingView,
+  ScrollView,
+  Alert,
 } from "react-native";
-import { useState } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 
-import React from "react";
-const TESTSIGN = () => {
+import { MaterialIcons, Entypo, AntDesign } from "@expo/vector-icons";
+
+const SignUpScreen = () => {
+  const navigation = useNavigation();
+  const [isChecked, setIsChecked] = useState(false);
+
+  const toggleCheckBox = () => {
+    setIsChecked(!isChecked);
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const handleRegister = () => {
+    const user = {
+      name,
+      email,
+      password,
+      gender,
+      phoneNumber,
+      dateOfBirth,
+    };
+    axios
+      .post("https://spotwise-backend-anis-askris-projects.vercel.app/register", user)
+      .then((response) => {
+        console.log(response);
 
-
-
+        Alert.alert("Resgistred Succesfully");
+        navigation.replace("Login1");
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert("error while registering.");
+      });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.first}>
@@ -40,127 +71,178 @@ const TESTSIGN = () => {
             Hello !
           </Text>
         </View>
-        <KeyboardAvoidingView>
+        <ScrollView style={styles.containerview}>
+          <KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+              <AntDesign name="user" size={24} color="black" />
+              <TextInput
+                value={name}
+                onChangeText={(text) => setName(text)}
+                style={styles.input}
+                placeholder="Enter your Full Name"
+              />
+            </View>
+          </KeyboardAvoidingView>
+          <KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+              <MaterialIcons
+                name="email"
+                size={24}
+                color="black"
+                style={{ marginRight: 10 }}
+              />
+              <TextInput
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                style={styles.input}
+                placeholder="Enter your Email"
+              />
+            </View>
+          </KeyboardAvoidingView>
+          <KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+              <Entypo
+                name="lock"
+                size={24}
+                color="black"
+                style={{ marginRight: 10 }}
+              />
+              <TextInput
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                style={styles.input}
+                placeholder="Enter your password"
+                secureTextEntry={true}
+              />
+            </View>
+          </KeyboardAvoidingView>
           <View style={styles.inputContainer}>
-          <AntDesign name="user" size={24} color="black" />
-            <TextInput
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-              style={styles.input}
-              placeholder="Enter your Email"
-            />
-          </View>
-        </KeyboardAvoidingView>
-        <KeyboardAvoidingView>
-          <View style={styles.inputContainer}>
-          <MaterialIcons
-              name="email"
+            <MaterialIcons
+              name="wc"
               size={24}
               color="black"
               style={{ marginRight: 10 }}
             />
             <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text)}
+              value={gender}
+              onChangeText={(text) => setGender(text)}
               style={styles.input}
-              placeholder="Enter your Email"
+              placeholder="Enter your Gender"
             />
           </View>
-        </KeyboardAvoidingView>
-        <KeyboardAvoidingView>
-          <View style={styles.inputContainer}>
-          <Entypo
-              name="lock"
-              size={24}
+          <KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+              <MaterialIcons
+                name="phone"
+                size={24}
+                color="black"
+                style={{ marginRight: 10 }}
+              />
+              <TextInput
+                value={phoneNumber}
+                onChangeText={(text) => setPhoneNumber(text)}
+                style={styles.input}
+                placeholder="Enter your Phone Number"
+              />
+            </View>
+          </KeyboardAvoidingView>
+          <KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+              <MaterialIcons
+                name="event"
+                size={24}
+                color="black"
+                style={{ marginRight: 10 }}
+              />
+              <TextInput
+                value={dateOfBirth}
+                onChangeText={(text) => setDateOfBirth(text)}
+                style={styles.input}
+                placeholder="Enter your Date of Birth"
+              />
+            </View>
+          </KeyboardAvoidingView>
+          <View style={{ flexDirection: "row" }}>
+            <Pressable onPress={toggleCheckBox}>
+              {isChecked ? (
+                <AntDesign
+                  name="checkcircle"
+                  size={22}
+                  color="black"
+                  style={{ marginRight: 15, marginLeft: 5 }}
+                />
+              ) : (
+                <Entypo name="circle" size={24} color="black" />
+              )}
+            </Pressable>
+            <Text style={{ fontSize: 18 }}>
+              I agree to the{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                terms & confidentialites{" "}
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.LoginContainer}>
+            <Pressable onPress={handleRegister}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  fontFamily: "italic",
+                  textAlign: "center",
+                  color: "white",
+                  margin: 15,
+                }}
+              >
+                Sign Up
+              </Text>
+            </Pressable>
+          </View>
+          <View style={styles.lineContainer}>
+            <View style={styles.line} />
+            <Text style={styles.orText}>Or</Text>
+            <View style={styles.line} />
+          </View>
+          <View style={{ flexDirection: "row", alignSelf: "center" }}>
+            <AntDesign
+              name="apple1"
+              size={50}
               color="black"
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 15 }}
             />
-            <TextInput
-              value={email}
-              onChangeText={(text) => setPassword(text)}
-              style={styles.input}
-              placeholder="Enter your password"
-            />
-          </View>
-        </KeyboardAvoidingView>
-        <KeyboardAvoidingView>
-          <View style={styles.inputContainer}>
-          <Entypo
-              name="lock"
-              size={24}
+            <Entypo
+              name="facebook"
+              size={50}
               color="black"
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 15 }}
             />
-            <TextInput
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              style={styles.input}
-              placeholder="Confirm Password"
-            />
+            <AntDesign name="google" size={50} color="black" />
           </View>
-        </KeyboardAvoidingView>
-        <View style={{flexDirection : "column"}}>
-        <Pressable>
-
-        <AntDesign name="checkcircle" size={24} color="black" />
-        </Pressable>
-        <Text>I agree to the <Text style ={{fontWeight :'bold'}}>terms & confidentialites </Text></Text>
-       
-        </View>
-        <View style={styles.LoginContainer}>
-          <Pressable>
+          <Pressable
+            onPress={() => {
+              navigation.navigate("Login1");
+            }}
+          >
             <Text
               style={{
+                textAlign: "right",
+                fontSize: 18,
+                marginTop: 10,
+                color: "gray",
+                alignSelf: "center",
                 fontWeight: "bold",
-                fontSize: 20,
-                fontFamily: "italic",
-                textAlign: "center",
-                color: "white",
-                margin: 15,
               }}
             >
-              Sign Up
+              Already have an account ? Sign In
             </Text>
           </Pressable>
-        </View>
-        <View style={styles.lineContainer}>
-          <View style={styles.line} />
-          <Text style={styles.orText}>Or</Text>
-          <View style={styles.line} />
-        </View>
-        <View style={{ flexDirection: "row", alignSelf: "center" }}>
-          <AntDesign
-            name="apple1"
-            size={50}
-            color="black"
-            style={{ marginRight: 15 }}
-          />
-          <Entypo
-            name="facebook"
-            size={50}
-            color="blue"
-            style={{ marginRight: 15 }}
-          />
-          <AntDesign name="google" size={50} color="black" />
-        </View>
-        <Text
-          style={{
-            textAlign: "right",
-            fontSize: 18,
-            marginTop: 10,
-            color: "gray",
-            alignSelf: "center",
-            fontWeight: "bold",
-          }}
-        >
-          Don't have an account ? SignUp
-        </Text>
+        </ScrollView>
       </View>
     </View>
   );
 };
 
-export default TESTSIGN;
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -194,7 +276,7 @@ const styles = StyleSheet.create({
   },
   LoginContainer: {
     marginTop: 20,
-    backgroundColor: "#FE5F3C",
+    backgroundColor: "black",
     width: 350,
     height: 60,
     borderRadius: 40,

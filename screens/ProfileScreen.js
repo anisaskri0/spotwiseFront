@@ -11,9 +11,52 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import HomeScreen from "./HomeScreen";
+import * as ImagePicker from 'react-native-image-picker';
+import { Alert } from "react-native";
 import axios from "axios";
 
 const ProfileScreen = ({ navigation }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleChooseImage = () => {
+  // Launch image library to select an image
+  ImagePicker.launchCamera({ mediaType: 'photo' }, (response) => {
+    if (!response.didCancel) {
+      // Handle selected image response
+      setSelectedImage(response);
+      // Call upload function immediately after selecting image
+      handleUploadImage(response);
+    }
+  });
+};
+
+  const handleUploadImage = async () => {
+    if (!selectedImage) {
+      Alert.alert('Please select an image');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('profilePicture', {
+      uri: selectedImage.uri,
+      type: selectedImage.type,
+      name: selectedImage.fileName,
+    });
+
+    try {
+      const response = await axios.post('http://10.0.2.2/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      Alert.alert('Image uploaded successfully');
+      console.log('Server response:', response.data);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Failed to upload image');
+    }
+  };
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
@@ -48,7 +91,7 @@ const ProfileScreen = ({ navigation }) => {
     try {
       await AsyncStorage.removeItem("authToken");
       await AsyncStorage.removeItem("email");
-      navigation.navigate("Login");
+      navigation.navigate("Login1");
     } catch (error) {
       console.log(error);
     }
@@ -62,37 +105,34 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.upperSection}>
-        {/* Profile picture placeholder */}
+      <View style={styles.firstSection}>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={{ margin: 15 }}
+          >
+            <AntDesign name="arrowleft" size={30} color="white" />
+          </TouchableOpacity>
+     
+        </View>
         <View style={styles.profileContainer}>
+          <View style={styles.cameraContainer}>
+            <TouchableOpacity onPress={handleChooseImage}>
+              <AntDesign name="camera" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
           <Image
             style={styles.profilePicture}
             source={require("./spotwise.png")}
           />
-          <View style={{ flexDirection: "column", marginLeft: 5 }}>
-            <Text style={styles.greeting}>Hello</Text>
-            <Text style={styles.username}>Askri Anis</Text>
-          </View>
-          <View style={styles.iconContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                console.log("edit profile");
-              }}
-            >
-              <View style={styles.iconCircle}>
-                <FontAwesome5 name="user-edit" size={20} color="white" />
-              </View>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
       <View style={styles.middleSection}>
         <View style={{ flexDirection: "column" }}>
           <View style={styles.box}>
             <Text style={styles.text}>My Home</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Main")}>
               <View style={styles.icon}>
-                <AntDesign name="rightcircle" size={30} color="black" />
+                <AntDesign name="rightcircle" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -104,7 +144,7 @@ const ProfileScreen = ({ navigation }) => {
               }}
             >
               <View style={styles.icon}>
-                <AntDesign name="rightcircle" size={30} color="black" />
+                <AntDesign name="rightcircle" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -112,11 +152,11 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.text}>Account Details</Text>
             <TouchableOpacity
               onPress={() => {
-                /* Add your onPress logic here */
+                navigation.navigate("Account");
               }}
             >
               <View style={styles.icon}>
-                <AntDesign name="rightcircle" size={30} color="black" />
+                <AntDesign name="rightcircle" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -129,7 +169,7 @@ const ProfileScreen = ({ navigation }) => {
               }}
             >
               <View style={styles.icon}>
-                <AntDesign name="rightcircle" size={30} color="black" />
+                <AntDesign name="rightcircle" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -138,7 +178,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.text}>Contact Support </Text>
             <TouchableOpacity onPress={() => {}}>
               <View style={styles.icon}>
-                <AntDesign name="rightcircle" size={30} color="black" />
+                <AntDesign name="rightcircle" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -148,19 +188,20 @@ const ProfileScreen = ({ navigation }) => {
               flexDirection: "row",
               justifyContent: "space-between",
               paddingHorizontal: 5,
-              backgroundColor: "#FFFFF9",
+              backgroundColor: "black",
               height: 80,
-              borderColor: "#333",
+              borderColor: "white",
               marginBottom: 20,
-              borderWidth: 1,
+              borderWidth: 2,
               alignItems: "center", // Center vertically
               margin: 5,
+              borderRadius : 25
             }}
           >
             <Text style={styles.text}>Logout </Text>
             <TouchableOpacity onPress={handleLogout}>
               <View style={styles.icon}>
-                <Ionicons name="log-out" size={30} color="black" />
+                <Ionicons name="log-out" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>
@@ -172,24 +213,11 @@ const ProfileScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor :"grey",
     flex: 1,
+    marginTop : 20,
   },
-  upperSection: {
-    backgroundColor: "#001F3F", // Dark blue color
-    padding: 30,
-    marginTop: 20,
-  },
-  profileContainer: {
-    flexDirection: "row", // Align children horizontally
-    alignItems: "center", // Center children vertically
-  },
-  profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "white", // Placeholder color
-    marginRight: 10, // Add margin between profile picture and greeting text
-  },
+ 
   greeting: {
     color: "white",
     fontSize: 15,
@@ -201,15 +229,14 @@ const styles = StyleSheet.create({
   },
   middleSection: {
     flex: 1,
-    backgroundColor: "white", // Placeholder color
-    marginTop: 8,
+    marginTop: 100,
   },
   lowerSection: {
     height: 100,
-    backgroundColor: "lightgray", // Placeholder color
     justifyContent: "center",
     alignItems: "center",
   },
+
   iconContainer: {
     marginRight: 10, // Add margin to separate the icon button from the profile picture
   },
@@ -223,24 +250,58 @@ const styles = StyleSheet.create({
     marginLeft: 100,
   },
   text: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "black",
+    color: "white",
     marginLeft: 5,
   },
   box: {
-    margin: 5,
+    marginTop: 5,
+    borderRadius : 15,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    height: 90,
-    borderColor: "#333",
-    borderWidth: 1,
+    backgroundColor: "black",
+    height: 60,
+    borderColor: "white",
+    borderWidth: 2,
     alignItems: "center", // Center vertically
   },
 
   icon: {
     marginRight: 10, // Adjust margin as needed to move the icon to the right
+  },
+  firstSection: {
+    borderRadius: 60,
+    backgroundColor: "black", // Dark blue color
+    height: 200,
+    borderTopRightRadius : 0 , 
+    borderTopLeftRadius : 0 , 
+
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cameraContainer: {
+    position: "absolute",
+    top: 20,
+    left: 100,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FFA500",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1, // Ensure the camera icon is above the profile picture
+  },
+  profilePicture: {
+    marginTop: 20,
+    marginLeft: 100,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "white",
+    marginRight: 10,
   },
 });
 export default ProfileScreen;
